@@ -8,7 +8,7 @@ rows = columns = 8
 def shuffle():
     # Returns a randomized board with the settings above
     grid = ['m']*mines
-    grid.extend(['_']*(rows*columns -mines))
+    grid.extend([' ']*(rows*columns -mines))
     random.shuffle(grid)
     
     return grid
