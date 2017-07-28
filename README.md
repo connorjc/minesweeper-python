@@ -13,9 +13,9 @@ Currently the game is incomplete.
 ```
 
 ## FORMAT:
-Unknown:      '?'
-Mines:        'm'
-Explosion:    'X'
-Flag:         'F'
-Warnings:     '1','2','3',...
-Empty:        ' '
+* Unknown:      '?'
+* Mines:        'm'
+* Explosion:    'X'
+* Flag:         'F'
+* Warnings:     '1','2','3',...
+* Empty:        ' '
