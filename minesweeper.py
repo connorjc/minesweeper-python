@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import argparse, time, random
+import argparse, sys, random, time
 
 def shuffle():
     # Returns a randomized board with the settings above
@@ -47,17 +47,20 @@ if __name__ == "__main__":
                                         description="Override how many rows, \
                                     columns, and mines your game will have.")
     group2.add_argument("-m", "--mines", type=int,
-                                help="specify the number of mines on the grid \
-                                in range [5,ROWS*COLUMNS]")
+                                help="specify number of mines in range [5,rows*columns]",
+                                metavar="{5,...,rows*columns}")
     group2.add_argument("-r", "--rows", type=int,
                                 help="specify number of rows in range [4,30]",
-                                choices=xrange(4,31), metavar="ROWS")
+                                choices=xrange(4,31),
+                                metavar="{4,...,30}")
     group2.add_argument("-c", "--columns", type=int,
                                 help="specify number of columns in range [4,30]",
-                                choices=xrange(4,31), metavar="COLUMNS")
+                                choices=xrange(4,31),
+                                metavar="{4,...,30}")
     group2.add_argument("-d", "--dimensions", type=int,
                                 help="specify number for rows and columns in range [4,30]",
-                                choices=xrange(4,31), metavar="DIMENSIONS")
+                                choices=xrange(4,31),
+                                metavar="{4,...,30}")
 
 
     args = parser.parse_args()
@@ -81,10 +84,19 @@ if __name__ == "__main__":
     if args.dimensions is not None:
         rows = columns = args.dimensions
 
+    # Print error in the same style as argparse
     if mines >= rows*columns:
-        raise ValueError("Cannot have mines greater than or equal to the grid area")
+        parser.print_usage()
+        print sys.argv[0][2:] + ": error: argument -m/--mines: invalid choice:", 
+        print "{} (choose from {})".format(args.mines, str(range(5,rows*columns))[1:-1])
+        print "Cannot have mines greater than or equal to the grid area"
+        sys.exit(2)
     elif mines < 5:
-        raise ValueError("Cannot have less then 5 mines")
+        parser.print_usage()
+        print sys.argv[0][2:] + ": error: argument -m/--mines: invalid choice:",
+        print "{} (choose from {})".format(args.mines, str(range(5,rows*columns))[1:-1])
+        print "Cannot have less then 5 mines"
+        sys.exit(2)
 
     board = shuffle()
     display(board)

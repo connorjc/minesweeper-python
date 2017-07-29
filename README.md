@@ -7,8 +7,8 @@ component once the terminal based version is complete.
 Currently the game is incomplete.
 
 ## USAGE:
-usage: minesweeper.py [-h] [-E | -M | -H] [-m MINES] [-r ROWS] [-c COLUMNS]
-                      [-d DIMENSIONS]
+usage: minesweeper.py [-h] [-E | -M | -H] [-m {5,...,rows*columns}]
+                      [-r {4,...,30}] [-c {4,...,30}] [-d {4,...,30}]
 
 ## RUN:
 ```
