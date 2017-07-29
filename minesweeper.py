@@ -3,14 +3,62 @@ import argparse, sys, random, time
 
 def shuffle():
     # Returns a randomized board with the settings above
-    grid = ['m']*mines
-    grid.extend([' ']*(rows*columns -mines))
+    grid = ['M']*mines
+    grid.extend(['0']*(rows*columns -mines))
     random.shuffle(grid)
-    
+
+    for loc in list(map(lambda z: str(z%rows)+','+str(z/rows), [i for i, x in \
+        enumerate(grid) if x == 'M'])):
+        init_cells(grid, loc)
+
     return grid
 
+def init_cells(grid, loc):
+    a,b = loc.split(',')
+    a = int(a)
+    b = int(b)
+    if a-1 >= 0 and b-1 >=0: # TOP LEFT CORNER
+        if get_index(grid,a-1,b-1) != 'M':
+            set_index(grid,a-1,b-1,\
+                str(int(get_index(grid,a-1,b-1))+1))
+
+    if a-1 >= 0: # TOP MIDDLE
+        if get_index(grid,a-1,b) != 'M':
+            set_index(grid,a-1,b,\
+                str(int(get_index(grid,a-1,b))+1))
+
+    if a-1 >= 0 and b+1 <= columns-1: # TOP RIGHT CORNER
+        if get_index(grid,a-1,b+1) != 'M':
+            set_index(grid,a-1,b+1,\
+                str(int(get_index(grid,a-1,b+1))+1))
+
+    if b-1 >= 0: # LEFT MIDDLE
+        if get_index(grid,a,b-1) != 'M':
+            set_index(grid,a,b-1,\
+                str(int(get_index(grid,a,b-1))+1))
+
+    if b+1 <= columns-1: # RIGHT MIDDLE
+        if get_index(grid,a,b+1) != 'M':
+            set_index(grid,a,b+1,\
+                str(int(get_index(grid,a,b+1))+1))
+
+    if a+1 <= rows-1 and b-1 >= 0: # BOTTOM LEFT CORNER
+        if get_index(grid,a+1,b-1) != 'M':
+            set_index(grid,a+1,b-1,\
+                str(int(get_index(grid,a+1,b-1))+1))
+
+    if a+1 <= rows-1: # BOTTOM MIDDLE
+        if get_index(grid,a+1,b) != 'M':
+            set_index(grid,a+1,b,\
+                str(int(get_index(grid,a+1,b))+1))
+
+    if a+1 <= rows-1 and b+1 <= columns-1: # BOTTOM RIGHT
+        if get_index(grid,a+1,b+1) != 'M':
+            set_index(grid,a+1,b+1,\
+                str(int(get_index(grid,a+1,b+1))+1))
+
 def set_index(grid, x, y, value):
-    grid[x+(y*columns)] = value
+    grid[x+(y*rows)] = value
 
 def get_index(grid, x, y):
     return grid[x+(y*rows)]
@@ -67,7 +115,6 @@ if __name__ == "__main__":
                                 help="specify number for rows and columns in range [4,30]",
                                 choices=xrange(4,31),
                                 metavar="{4,...,30}")
-
 
     args = parser.parse_args()
     if args.hard:

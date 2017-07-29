@@ -16,10 +16,10 @@ usage: minesweeper.py [-h] [-E | -M | -H] [-m {5,...,rows*columns}]
 ```
 
 ## FORMAT:
-* Unknown       ' '
-* Mines:        'm'
+* Unknown:      ' '
+* Mines:        'M'
 * Explosion:    'X'
 * Flag:         'F'
 * Mark:         '?'
-* Warnings:     '1','2','3',...
+* Warnings:     '1',...,'8'
 * Empty         '0'
