@@ -16,16 +16,22 @@ def get_index(grid, x, y):
     return grid[x+(y*rows)]
 
 def display(grid):
-    print ' ',
+    print '    ',
     for c in range(columns):
-        print '  ' + str(c),
-    print '\n  '+"----"*columns + '-'
+        if c >= 10:
+            print str(c) + ' ',
+        else:
+            print str(c) + "  ",
+    print '\n   '+"----"*columns + '-'
     
     for r in range(rows):
-        print r,
+        if r < 10:
+            print str(r) + ' ',
+        else:
+            print r,
         for c in range(columns):
             print "| " + get_index(grid,r,c),
-        print "|\n  " + "----"*columns + '-'
+        print "|\n   " + "----"*columns + '-'
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="A terminal based minesweeper game",
