@@ -70,7 +70,7 @@ def display(grid):
             print str(c) + ' ',
         else:
             print str(c) + "  ",
-    print '\n   '+"----"*columns + '-'
+    print '\n   '+"+---"*columns + '+'
     
     for r in range(rows):
         if r < 10:
@@ -79,7 +79,7 @@ def display(grid):
             print r,
         for c in range(columns):
             print "| " + get_index(grid,r,c),
-        print "|\n   " + "----"*columns + '-'
+        print "|\n   " + "+---"*columns + '+'
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="A terminal based minesweeper game",
@@ -98,8 +98,8 @@ if __name__ == "__main__":
                             action="store_true")
     
     group2 = parser.add_argument_group("Custom settings",
-                                        description="Override how many rows, \
-                                    columns, and mines your game will have.")
+        description="Override how many rows, \
+        columns, and mines your game will have.")
     group2.add_argument("-m", "--mines", type=int,
                                 help="specify number of mines in range [5,rows*columns]",
                                 metavar="{5,...,rows*columns}")
