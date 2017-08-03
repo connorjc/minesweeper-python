@@ -61,7 +61,10 @@ def set_index(grid, x, y, value):
     grid[x+(y*rows)] = value
 
 def get_index(grid, x, y):
-    return grid[x+(y*rows)]
+    value = grid[x+(y*rows)]
+    if value == None:
+        return ' '
+    return value
 
 def display(grid):
     print '    ',
@@ -80,6 +83,18 @@ def display(grid):
         for c in range(columns):
             print "| " + get_index(grid,r,c),
         print "|\n   " + "+---"*columns + '+'
+
+def input_board(layer, grid, x, y):
+    value = get_index(layer, x, y)
+    if value == ' ': # found unchosen
+        reveal = get_index(grid, x, y)
+        set_index(layer, x, y, reveal)
+        if reveal == 'M':
+            return True
+        else:
+            return False
+    else: # picked an already revealed cell
+        return False
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="A terminal based minesweeper game",
@@ -140,8 +155,27 @@ if __name__ == "__main__":
 
     if args.mines is not None:
         percent = args.mines
-
     mines = (percent * rows * columns)/100
+    
+    gameover = False
 
+    layer = [None]*(rows*columns)
     board = shuffle()
-    display(board)
+
+    while gameover == False:
+        display(layer)
+        try:
+            coord_x, coord_y = input("Select a position: (x,y)\n> ")
+            gameover = input_board(layer, board, coord_x, coord_y)
+        except IndexError:
+            print "ERROR: Index out of bounds.\nRows must be between [0, " + \
+                str(rows-1) + "]\nColumns must be between [0,"+\
+                str(columns)+"]\n"
+        '''
+        except Exception:
+            print "\nERROR: Text must be of the format:\n" + \
+                "'(x,y)', '(xi, y)', 'x,y', or 'x, y'\nTry again...\n"
+        '''
+        if gameover:
+            print "Gameover!"
+            display(layer)
