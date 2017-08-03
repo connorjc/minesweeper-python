@@ -84,17 +84,25 @@ def display(grid):
             print "| " + get_index(grid,r,c),
         print "|\n   " + "+---"*columns + '+'
 
-def input_board(layer, grid, x, y):
+def input_board(layer, grid, x, y, flag=None):
     value = get_index(layer, x, y)
-    if value == ' ': # found unchosen
+    if (value == ' ' or value == '?') and flag is None: # found unchosen
         reveal = get_index(grid, x, y)
         set_index(layer, x, y, reveal)
         if reveal == 'M':
             return True
         else:
-            return False
-    else: # picked an already revealed cell
-        return False
+            global count
+            count -= 1
+    elif (value == 'F' or value == '?') and flag == 'U':
+        set_index(layer, x, y, None)
+    elif (value == ' ' or value == 'F' or value == '?') and flag is not None:
+        if flag != 'U':
+            set_index(layer, x, y, flag)
+    return False
+
+def check_win(count):
+    return (count == 0)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="A terminal based minesweeper game",
@@ -157,25 +165,37 @@ if __name__ == "__main__":
         percent = args.mines
     mines = (percent * rows * columns)/100
     
-    gameover = False
+    win = gameover = False
+    count = rows*columns - mines
 
     layer = [None]*(rows*columns)
     board = shuffle()
+    
+    display(layer)
 
     while gameover == False:
-        display(layer)
         try:
-            coord_x, coord_y = input("Select a position: (x,y)\n> ")
-            gameover = input_board(layer, board, coord_x, coord_y)
+            string = raw_input("Select a position: ex. 'f x y', 'x y'\n> ")
+            if string != "quit":
+                if string[0].lower() == 'f' or string[0] == '?' or \
+                    string[0].lower() == 'u':
+                    char, coord_x, coord_y = string.split()
+                    char = char.upper()
+                else:
+                    coord_x, coord_y = string.split()
+                    char = None
+                gameover = input_board(layer, board, int(coord_x), int(coord_y),
+                     char)
+                win = check_win(count)
+            else:
+                gameover = True
         except IndexError:
             print "ERROR: Index out of bounds.\nRows must be between [0, " + \
                 str(rows-1) + "]\nColumns must be between [0,"+\
                 str(columns)+"]\n"
-        '''
-        except Exception:
-            print "\nERROR: Text must be of the format:\n" + \
-                "'(x,y)', '(xi, y)', 'x,y', or 'x, y'\nTry again...\n"
-        '''
         if gameover:
             print "Gameover!"
-            display(layer)
+        if win:
+            print "You Win!!"
+            gameover = True
+        display(layer)

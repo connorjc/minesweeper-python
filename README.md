@@ -23,8 +23,8 @@ usage: minesweeper.py [-h] [-E | -M | -H] [-m {15,...,99}] [-r
 ## FORMAT:
 * Unknown:      ' '
 * Flag:         'F'
+* Remove Flag:  'U'
 * Mark:         '?'
-* Explosion:    'X'
 * Mines:        'M'
 * Warnings:     '1',...,'8'
 * Empty         '0'
