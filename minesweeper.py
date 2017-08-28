@@ -101,6 +101,12 @@ def input_board(layer, grid, x, y, flag=None):
             set_index(layer, x, y, flag)
     return False
 
+#TODO: implement auto_reveal
+def auto_reveal():
+    # Called when user uncovers a 0. This function will recursively call
+    # input_board() until every neighboring 0 is uncovered.
+    pass
+
 def check_win(count):
     return (count == 0)
 
@@ -192,7 +198,7 @@ if __name__ == "__main__":
         except IndexError:
             print "ERROR: Index out of bounds.\nRows must be between [0, " + \
                 str(rows-1) + "]\nColumns must be between [0,"+\
-                str(columns)+"]\n"
+                str(columns-1)+"]\n"
         if gameover:
             print "Gameover!"
         if win:
