@@ -92,6 +92,8 @@ def input_board(layer, grid, x, y, flag=None):
         if reveal == 'M':
             return True
         else:
+            if reveal == '0':
+                auto_reveal(layer, grid, (x, y))
             global count
             count -= 1
     elif (value == 'F' or value == '?') and flag == 'U':
@@ -101,11 +103,55 @@ def input_board(layer, grid, x, y, flag=None):
             set_index(layer, x, y, flag)
     return False
 
-#TODO: implement auto_reveal
-def auto_reveal():
-    # Called when user uncovers a 0. This function will recursively call
-    # input_board() until every neighboring 0 is uncovered.
-    pass
+def auto_reveal(layer, grid, current, positions=[]):
+    '''
+    Called when user uncovers a 0. This function will recursively call
+    input_board() until every neighboring 0 is uncovered.
+
+    Parameters: 'current' is a tuple with the position of a 0
+    'positions' is a default parameter that stores all the surrounding cells
+    that need to be checked for 0's
+
+    Base Case: at the end of the function, if the positions list is empty, 
+    don't recursively call
+    '''
+    #Check 8 positions surrounding
+    a,b = current
+    if a-1 >= 0 and b-1 >=0: # TOP LEFT CORNER
+        if get_index(grid,a-1,b-1) != 'M':
+            positions.append((a-1,b-1))
+
+    if a-1 >= 0: # TOP MIDDLE
+        if get_index(grid,a-1,b) != 'M':
+            positions.append((a-1,b))
+
+    if a-1 >= 0 and b+1 <= columns-1: # TOP RIGHT CORNER
+        if get_index(grid,a-1,b+1) != 'M':
+            positions.append((a-1,b+1))
+
+    if b-1 >= 0: # LEFT MIDDLE
+        if get_index(grid,a,b-1) != 'M':
+            positions.append((a,b-1))
+
+    if b+1 <= columns-1: # RIGHT MIDDLE
+        if get_index(grid,a,b+1) != 'M':
+            positions.append((a,b+1))
+
+    if a+1 <= rows-1 and b-1 >= 0: # BOTTOM LEFT CORNER
+        if get_index(grid,a+1,b-1) != 'M':
+            positions.append((a+1,b-1))
+
+    if a+1 <= rows-1: # BOTTOM MIDDLE
+        if get_index(grid,a+1,b) != 'M':
+            positions.append((a+1,b))
+
+    if a+1 <= rows-1 and b+1 <= columns-1: # BOTTOM RIGHT
+        if get_index(grid,a+1,b+1) != 'M':
+            positions.append((a+1,b+1))
+
+    while positions != []: #Base Case
+        x,y = positions.pop()
+        input_board(layer, grid, x, y)
 
 def check_win(count):
     return (count == 0)

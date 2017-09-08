@@ -13,7 +13,7 @@ usage: minesweeper.py [-h] [-E | -M | -H] [-m {15,...,99}] [-r
   * mines = 15%
   * rows = columns = 8
 * minimum mine percentage is 15%
-* mazimum mine percentage is 99%
+* maximum mine percentage is 99%
 
 ## RUN:
 ```
