@@ -81,8 +81,32 @@ def display(grid):
         else:
             print r,
         for c in range(columns):
-            print "| " + get_index(grid,r,c),
+            print "| " + add_color(get_index(grid,r,c)),
         print "|\n   " + "+---"*columns + '+'
+
+def add_color(value):
+    if value == 'M':
+        return '\033[0;31mM\033[0m'
+    elif value == 'F' or value == '?':
+        return '\033[1;33m'+value+'\033[0m'
+    elif value == '1':
+        return '\033[0;34m'+value+'\033[0m'
+    elif value == '2':
+        return '\033[0;32m'+value+'\033[0m'
+    elif value == '3':
+        return '\033[1;31m'+value+'\033[0m'
+    elif value == '4':
+        return '\033[0;35m'+value+'\033[0m'
+    elif value == '5':
+        return '\033[0;33m'+value+'\033[0m'
+    elif value == '6':
+        return '\033[0;36m'+value+'\033[0m'
+    elif value == '7':
+        return '\033[1;30m'+value+'\033[0m'
+    elif value == '8':
+        return '\033[0;37m'+value+'\033[0m'
+    else: #0
+        return value
 
 def input_board(layer, grid, x, y, flag=None):
     value = get_index(layer, x, y)
@@ -245,9 +269,12 @@ if __name__ == "__main__":
             print "ERROR: Index out of bounds.\nRows must be between [0, " + \
                 str(rows-1) + "]\nColumns must be between [0,"+\
                 str(columns-1)+"]\n"
+        except ValueError:
+            print "ERROR: Bad imput, try again."
         if gameover:
-            print "Gameover!"
+            print '\033[0;31mGameover!\033[0m'
         if win:
-            print "You Win!!"
+            print '\033[0;32mYou Win!\033[0m'
+            print ""
             gameover = True
         display(layer)
