@@ -83,6 +83,7 @@ def display(grid):
         for c in range(columns):
             print "| " + add_color(get_index(grid,r,c)),
         print "|\n   " + "+---"*columns + '+'
+    print "Mines left:", flagsPlaced
 
 def add_color(value):
     if value == 'M':
@@ -109,6 +110,8 @@ def add_color(value):
         return value
 
 def input_board(layer, grid, x, y, flag=None):
+    global flagsPlaced
+    global minesFound
     value = get_index(layer, x, y)
     if (value == ' ' or value == '?') and flag is None: # found unchosen
         reveal = get_index(grid, x, y)
@@ -121,8 +124,16 @@ def input_board(layer, grid, x, y, flag=None):
             global count
             count -= 1
     elif (value == 'F' or value == '?') and flag == 'U':
+        if value == 'F':
+            flagsPlaced += 1
+            if get_index(grid, x, y) == 'M': #mine flagged
+                minesFound -= 1
         set_index(layer, x, y, None)
     elif (value == ' ' or value == 'F' or value == '?') and flag is not None:
+        if flag == 'F':
+            flagsPlaced -= 1
+            if get_index(grid, x, y) == 'M': #mine flagged
+                minesFound += 1
         if flag != 'U':
             set_index(layer, x, y, flag)
     return False
@@ -131,7 +142,7 @@ def auto_reveal(layer, grid, current, positions=[]):
     '''
     Called when user uncovers a 0. This function will recursively call
     input_board() until every neighboring 0 is uncovered.
-
+,
     Parameters: 'current' is a tuple with the position of a 0
     'positions' is a default parameter that stores all the surrounding cells
     that need to be checked for 0's
@@ -177,11 +188,16 @@ def auto_reveal(layer, grid, current, positions=[]):
         x,y = positions.pop()
         input_board(layer, grid, x, y)
 
-def check_win(count):
-    return (count == 0)
+def check_win(count, flagsPlaced, minesFound):
+    if count == 0:
+        return True
+    if flagsPlaced == 0 and minesFound == 0:
+        return True
+    return False
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="A terminal based minesweeper game",
+    parser = argparse.ArgumentParser(description="A terminal based minesweeper\
+        game\nTo end the game, type either: \"quit\", \"exit\", or \"abort\"",
         epilog="Author: Connor Christian")
     
     group1 = parser.add_argument_group("Gamemodes", 
@@ -206,16 +222,16 @@ if __name__ == "__main__":
         metavar="{15,...,99}")
     group2.add_argument("-r", "--rows", type=int,
         help="specify number of rows in range [4,30]",
-        choices=xrange(4,31),
-        metavar="{4,...,30}")
+        choices=xrange(4,100),
+        metavar="{4,...,99}")
     group2.add_argument("-c", "--columns", type=int,
         help="specify number of columns in range [4,30]",
-        choices=xrange(4,31),
-        metavar="{4,...,30}")
+        choices=xrange(4,100),
+        metavar="{4,...,99}")
     group2.add_argument("-d", "--dimensions", type=int,
         help="specify number for rows and columns in range [4,30]",
-        choices=xrange(4,31),
-        metavar="{4,...,30}")
+        choices=xrange(4,100),
+        metavar="{4,...,99}")
 
     args = parser.parse_args()
 
@@ -243,16 +259,18 @@ if __name__ == "__main__":
     
     win = gameover = False
     count = rows*columns - mines
+    flagsPlaced = mines
+    minesFound = 0
 
     layer = [None]*(rows*columns)
     board = shuffle()
-    
+   
+    start = time.time() 
     display(layer)
-
     while gameover == False:
         try:
             string = raw_input("Select a position: ex. 'f x y', 'x y'\n> ")
-            if string != "quit":
+            if string != "quit" and string != "exit" and string != "abort":
                 if string[0].lower() == 'f' or string[0] == '?' or \
                     string[0].lower() == 'u':
                     char, coord_x, coord_y = string.split()
@@ -262,7 +280,7 @@ if __name__ == "__main__":
                     char = None
                 gameover = input_board(layer, board, int(coord_x), int(coord_y),
                      char)
-                win = check_win(count)
+                win = check_win(count, flagsPlaced, mines - minesFound)
             else:
                 gameover = True
         except IndexError:
@@ -272,9 +290,24 @@ if __name__ == "__main__":
         except ValueError:
             print "ERROR: Bad imput, try again."
         if gameover:
+            end = time.time() - start
+            minutes = int(end / 60)
+            seconds = end % 60
             print '\033[0;31mGameover!\033[0m'
+            print "Elapsed time:", 
+            if minutes > 0:
+                print minutes, "minutes",
+            if seconds > 0:
+                print "%.2f" % seconds, "seconds"
         if win:
+            end = time.time() - start
+            minutes = int(end / 60)
+            seconds = end % 60
             print '\033[0;32mYou Win!\033[0m'
-            print ""
+            print "Elapsed time:", 
+            if minutes > 0:
+                print minutes, "minutes",
+            if seconds > 0:
+                print "%.2f" % seconds, "seconds"
             gameover = True
         display(layer)

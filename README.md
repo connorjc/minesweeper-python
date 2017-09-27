@@ -4,16 +4,18 @@ As of now it is only a terminal based game; however, I intend to have a GUI
 component once the terminal based version is complete.
 
 ## NOTICE:
-Currently the game is incomplete.
+The GUI is not yet implemented.
 
 ## USAGE:
 usage: minesweeper.py [-h] [-E | -M | -H] [-m {15,...,99}] [-r
 {4,...,30}] [-c {4,...,30}] [-d {4,...,30}]
 * Default setting is "Easy mode":
   * mines = 15%
-  * rows = columns = 8
+  * grid size = 8x8
 * minimum mine percentage is 15%
 * maximum mine percentage is 99%
+* minimum grid size is 4x4
+* maximum grid size is 30x30
 
 ## RUN:
 ```
