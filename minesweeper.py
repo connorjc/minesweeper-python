@@ -292,22 +292,22 @@ if __name__ == "__main__":
         if gameover:
             end = time.time() - start
             minutes = int(end / 60)
-            seconds = end % 60
+            seconds = int(end % 60)
             print '\033[0;31mGameover!\033[0m'
             print "Elapsed time:", 
             if minutes > 0:
                 print minutes, "minutes",
             if seconds > 0:
-                print "%.2f" % seconds, "seconds"
+                print seconds, "seconds"
         if win:
             end = time.time() - start
             minutes = int(end / 60)
-            seconds = end % 60
+            seconds = int(end % 60)
             print '\033[0;32mYou Win!\033[0m'
             print "Elapsed time:", 
             if minutes > 0:
                 print minutes, "minutes",
             if seconds > 0:
-                print "%.2f" % seconds, "seconds"
+                print seconds, "seconds"
             gameover = True
         display(layer)
