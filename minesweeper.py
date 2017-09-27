@@ -110,8 +110,8 @@ def add_color(value):
         return value
 
 def input_board(layer, grid, x, y, flag=None):
+    global count
     global flagsPlaced
-    global minesFound
     value = get_index(layer, x, y)
     if (value == ' ' or value == '?') and flag is None: # found unchosen
         reveal = get_index(grid, x, y)
@@ -121,19 +121,14 @@ def input_board(layer, grid, x, y, flag=None):
         else:
             if reveal == '0':
                 auto_reveal(layer, grid, (x, y))
-            global count
             count -= 1
     elif (value == 'F' or value == '?') and flag == 'U':
         if value == 'F':
             flagsPlaced += 1
-            if get_index(grid, x, y) == 'M': #mine flagged
-                minesFound -= 1
         set_index(layer, x, y, None)
     elif (value == ' ' or value == 'F' or value == '?') and flag is not None:
         if flag == 'F':
             flagsPlaced -= 1
-            if get_index(grid, x, y) == 'M': #mine flagged
-                minesFound += 1
         if flag != 'U':
             set_index(layer, x, y, flag)
     return False
@@ -188,12 +183,8 @@ def auto_reveal(layer, grid, current, positions=[]):
         x,y = positions.pop()
         input_board(layer, grid, x, y)
 
-def check_win(count, flagsPlaced, minesFound):
-    if count == 0:
-        return True
-    if flagsPlaced == 0 and minesFound == 0:
-        return True
-    return False
+def check_win(count):
+    return (count == 0)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="A terminal based minesweeper\
@@ -260,7 +251,6 @@ if __name__ == "__main__":
     win = gameover = False
     count = rows*columns - mines
     flagsPlaced = mines
-    minesFound = 0
 
     layer = [None]*(rows*columns)
     board = shuffle()
@@ -280,7 +270,7 @@ if __name__ == "__main__":
                     char = None
                 gameover = input_board(layer, board, int(coord_x), int(coord_y),
                      char)
-                win = check_win(count, flagsPlaced, mines - minesFound)
+                win = check_win(count)
             else:
                 gameover = True
         except IndexError:
