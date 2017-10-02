@@ -188,7 +188,7 @@ def check_win(count):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="A terminal based minesweeper\
-        game\nTo end the game, type either: \"quit\", \"exit\", or \"abort\"",
+        game. To end the game, type either: \"quit\", \"exit\", or \"abort\"",
         epilog="Author: Connor Christian")
     
     group1 = parser.add_argument_group("Gamemodes", 
@@ -212,17 +212,17 @@ if __name__ == "__main__":
         choices=xrange(15,100),
         metavar="{15,...,99}")
     group2.add_argument("-r", "--rows", type=int,
-        help="specify number of rows in range [4,30]",
-        choices=xrange(4,100),
-        metavar="{4,...,99}")
+        help="specify number of rows in range [4,100]",
+        choices=xrange(4,101),
+        metavar="{4,...,100}")
     group2.add_argument("-c", "--columns", type=int,
-        help="specify number of columns in range [4,30]",
-        choices=xrange(4,100),
-        metavar="{4,...,99}")
+        help="specify number of columns in range [4,100]",
+        choices=xrange(4,101),
+        metavar="{4,...,100}")
     group2.add_argument("-d", "--dimensions", type=int,
-        help="specify number for rows and columns in range [4,30]",
-        choices=xrange(4,100),
-        metavar="{4,...,99}")
+        help="specify number for rows and columns in range [4,100]",
+        choices=xrange(4,101),
+        metavar="{4,...,100}")
 
     args = parser.parse_args()
 
@@ -285,19 +285,27 @@ if __name__ == "__main__":
             seconds = int(end % 60)
             print '\033[0;31mGameover!\033[0m'
             print "Elapsed time:", 
-            if minutes > 0:
-                print minutes, "minutes",
-            if seconds > 0:
+            if minutes > 0 and seconds > 0:
+                print minutes, "minutes", seconds, "seconds"
+            elif minutes == 0:
                 print seconds, "seconds"
+            elif seconds == 0:
+                print minutes, "minutes"
+            else:
+                print "0 seconds"
         if win:
             end = time.time() - start
             minutes = int(end / 60)
             seconds = int(end % 60)
             print '\033[0;32mYou Win!\033[0m'
             print "Elapsed time:", 
-            if minutes > 0:
-                print minutes, "minutes",
-            if seconds > 0:
+            if minutes > 0 and seconds > 0:
+                print minutes, "minutes", seconds, "seconds"
+            elif minutes == 0:
                 print seconds, "seconds"
+            elif seconds == 0:
+                print minutes, "minutes"
+            else:
+                print "0 seconds"
             gameover = True
         display(layer)
