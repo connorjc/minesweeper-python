@@ -255,6 +255,11 @@ if __name__ == "__main__":
         columns = int(subprocess.check_output(cmd))
         # columns-3 accounts for indexing
         columns = (columns-3)/4
+        # The max values for rows & columns is 100, if exceeds set to 100
+        if rows > 100:
+            rows = 100
+        if columns > 100:
+            columns = 100
 
     if args.mines is not None:
         percent = args.mines
