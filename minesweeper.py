@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import argparse, sys, random, time
+import argparse, sys, random, time, shlex, subprocess
 
 def shuffle():
     # Returns a randomized board with the settings above
@@ -223,6 +223,9 @@ if __name__ == "__main__":
         help="specify number for rows and columns in range [4,100]",
         choices=xrange(4,101),
         metavar="{4,...,100}")
+    group2.add_argument("-f", "--fullscreen",
+        help="maximize gameboard to encompass the terminal window",
+        action="store_true")
 
     args = parser.parse_args()
 
@@ -243,6 +246,15 @@ if __name__ == "__main__":
         columns = args.columns
     if args.dimensions is not None:
         rows = columns = args.dimensions
+    if args.fullscreen:
+        cmd = shlex.split("tput lines")
+        rows = int(subprocess.check_output(cmd))
+        # rows-2 accounts for indexing; -2 at end accounts for error message
+        rows = (rows-2)/2 -2 
+        cmd = shlex.split("tput cols")
+        columns = int(subprocess.check_output(cmd))
+        # columns-3 accounts for indexing
+        columns = (columns-3)/4
 
     if args.mines is not None:
         percent = args.mines
