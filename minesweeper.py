@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import argparse, sys, random, time, shlex, subprocess
 
 def shuffle():
@@ -7,7 +7,7 @@ def shuffle():
     grid.extend(['0']*(rows*columns -mines))
     random.shuffle(grid)
 
-    for loc in list(map(lambda z: str(z%rows)+','+str(z/rows), [i for i, x in \
+    for loc in list(map(lambda z: str(z%rows)+','+str(z//rows), [i for i, x in 
         enumerate(grid) if x == 'M'])):
         init_cells(grid, loc)
 
@@ -67,23 +67,23 @@ def get_index(grid, x, y):
     return value
 
 def display(grid):
-    print '    ',
+    print(' '*5,end='')
     for c in range(columns):
         if c >= 10:
-            print str(c) + ' ',
+            print(str(c) + ' '*2,end='')
         else:
-            print str(c) + "  ",
-    print '\n   '+"+---"*columns + '+'
+            print(str(c) + ' '*3,end='')
+    print('\n   '+"+---"*columns + '+')
     
     for r in range(rows):
         if r < 10:
-            print str(r) + ' ',
+            print(' '+str(r) + ' ',end='')
         else:
-            print r,
+            print(str(r) + ' ',end='')
         for c in range(columns):
-            print "| " + add_color(get_index(grid,r,c)),
-        print "|\n   " + "+---"*columns + '+'
-    print "Mines left:", flagsPlaced
+            print("| " + add_color(get_index(grid,r,c))+' ',end='')
+        print("|\n   " + "+---"*columns + '+')
+    print("Mines left:", flagsPlaced)
 
 def add_color(value):
     if value == 'M':
@@ -209,19 +209,19 @@ if __name__ == "__main__":
         columns, and mines your game will have.")
     group2.add_argument("-m", "--mines", type=int,
         help="specify percentage of mines in range [15,99]",
-        choices=xrange(15,100),
+        choices=range(15,100),
         metavar="{15,...,99}")
     group2.add_argument("-r", "--rows", type=int,
         help="specify number of rows in range [4,100]",
-        choices=xrange(4,101),
+        choices=range(4,101),
         metavar="{4,...,100}")
     group2.add_argument("-c", "--columns", type=int,
         help="specify number of columns in range [4,100]",
-        choices=xrange(4,101),
+        choices=range(4,101),
         metavar="{4,...,100}")
     group2.add_argument("-d", "--dimensions", type=int,
         help="specify number for rows and columns in range [4,100]",
-        choices=xrange(4,101),
+        choices=range(4,101),
         metavar="{4,...,100}")
     group2.add_argument("-f", "--fullscreen",
         help="maximize gameboard to encompass the terminal window",
@@ -250,11 +250,11 @@ if __name__ == "__main__":
         cmd = shlex.split("tput lines")
         rows = int(subprocess.check_output(cmd))
         # rows-2 accounts for indexing; -2 at end accounts for error message
-        rows = (rows-2)/2 -2 
+        rows = (rows-2)//2 -2 
         cmd = shlex.split("tput cols")
         columns = int(subprocess.check_output(cmd))
         # columns-3 accounts for indexing
-        columns = (columns-3)/4
+        columns = (columns-3)//4
         # The max values for rows & columns is 100, if exceeds set to 100
         if rows > 100:
             rows = 100
@@ -263,7 +263,7 @@ if __name__ == "__main__":
 
     if args.mines is not None:
         percent = args.mines
-    mines = (percent * rows * columns)/100
+    mines = (percent * rows * columns)//100
     
     win = gameover = False
     count = rows*columns - mines
@@ -276,7 +276,7 @@ if __name__ == "__main__":
     display(layer)
     while gameover == False:
         try:
-            string = raw_input("Select a position: ex. 'f x y', 'x y'\n> ")
+            string = input("Select a position: ex. 'f x y', 'x y'\n> ")
             if string != "quit" and string != "exit" and string != "abort":
                 if string[0].lower() == 'f' or string[0] == '?' or \
                     string[0].lower() == 'u':
@@ -291,38 +291,38 @@ if __name__ == "__main__":
             else:
                 gameover = True
         except IndexError:
-            print "ERROR: Index out of bounds.\nRows must be between [0, " + \
+            print("ERROR: Index out of bounds.\nRows must be between [0, " + \
                 str(rows-1) + "]\nColumns must be between [0,"+\
-                str(columns-1)+"]\n"
+                str(columns-1)+"]\n")
         except ValueError:
-            print "ERROR: Bad imput, try again."
+            print("ERROR: Bad imput, try again.")
         if gameover:
             end = time.time() - start
-            minutes = int(end / 60)
+            minutes = int(end // 60)
             seconds = int(end % 60)
-            print '\033[0;31mGameover!\033[0m'
-            print "Elapsed time:", 
+            print('\033[0;31mGameover!\033[0m')
+            print("Elapsed time:", end='')
             if minutes > 0 and seconds > 0:
-                print minutes, "minutes", seconds, "seconds"
+                print(minutes, "minutes", seconds, "seconds")
             elif minutes == 0:
-                print seconds, "seconds"
+                print(seconds, "seconds")
             elif seconds == 0:
-                print minutes, "minutes"
+                print(minutes, "minutes")
             else:
-                print "0 seconds"
+                print("0 seconds")
         if win:
             end = time.time() - start
-            minutes = int(end / 60)
+            minutes = int(end // 60)
             seconds = int(end % 60)
-            print '\033[0;32mYou Win!\033[0m'
-            print "Elapsed time:", 
+            print('\033[0;32mYou Win!\033[0m')
+            print("Elapsed time:", end='')
             if minutes > 0 and seconds > 0:
-                print minutes, "minutes", seconds, "seconds"
+                print(minutes, "minutes", seconds, "seconds")
             elif minutes == 0:
-                print seconds, "seconds"
+                print(seconds, "seconds")
             elif seconds == 0:
-                print minutes, "minutes"
+                print(minutes, "minutes")
             else:
-                print "0 seconds"
+                print("0 seconds")
             gameover = True
         display(layer)
