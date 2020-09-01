@@ -25,52 +25,78 @@ def shuffle() -> List[str]:
     grid.extend(['0']*(ROWS*COLUMNS-MINES))
     random.shuffle(grid)
 
-    for coord in list(map(lambda z: (z%ROWS,z//ROWS),
-        [i for i, v in enumerate(grid) if v == 'M'])):
-        init_cells(grid, coord)
+    init_cells(grid)
 
     return grid
 
-def init_cells(grid: List[str], coord: Tuple[int,int]) -> None:
-    a,b = coord
+def init_cells(grid: List[str]) -> None:
+    """
+    Given a shuffled gameboard of mines and 0's, increment the surrounding cells of every mine
 
-    # TOP LEFT CORNER
-    if a-1 >= 0 and b-1 >=0 and get_index(grid,(a-1,b-1)) != 'M':
-        set_index(grid,(a-1,b-1),str(int(get_index(grid,(a-1,b-1)))+1))
+    Args:
+      grid: List[str]: the gameboard itself
 
-    # TOP MIDDLE
-    if a-1 >= 0 and get_index(grid,(a-1,b)) != 'M':
-        set_index(grid,(a-1,b),str(int(get_index(grid,(a-1,b)))+1))
+    Returns:
+    """
 
-    # TOP RIGHT CORNER
-    if a-1 >= 0 and b+1 <= COLUMNS-1 and get_index(grid,(a-1,b+1)) != 'M':
-        set_index(grid,(a-1,b+1),str(int(get_index(grid,(a-1,b+1)))+1))
+    for a,b in list(map(lambda z: (z%ROWS,z//ROWS), [i for i, v in enumerate(grid) if v == 'M'])):
+        # TOP LEFT CORNER
+        if a-1 >= 0 and b-1 >=0 and get_index(grid,(a-1,b-1)) != 'M':
+            set_index(grid,(a-1,b-1),str(int(get_index(grid,(a-1,b-1)))+1))
 
-    # LEFT MIDDLE
-    if b-1 >= 0 and get_index(grid,(a,b-1)) != 'M':
-        set_index(grid,(a,b-1),str(int(get_index(grid,(a,b-1)))+1))
+        # TOP MIDDLE
+        if a-1 >= 0 and get_index(grid,(a-1,b)) != 'M':
+            set_index(grid,(a-1,b),str(int(get_index(grid,(a-1,b)))+1))
 
-    # RIGHT MIDDLE
-    if b+1 <= COLUMNS-1 and get_index(grid,(a,b+1)) != 'M':
-        set_index(grid,(a,b+1),str(int(get_index(grid,(a,b+1)))+1))
+        # TOP RIGHT CORNER
+        if a-1 >= 0 and b+1 <= COLUMNS-1 and get_index(grid,(a-1,b+1)) != 'M':
+            set_index(grid,(a-1,b+1),str(int(get_index(grid,(a-1,b+1)))+1))
 
-    # BOTTOM LEFT CORNER
-    if a+1 <= ROWS-1 and b-1 >= 0 and get_index(grid,(a+1,b-1)) != 'M':
-        set_index(grid,(a+1,b-1),str(int(get_index(grid,(a+1,b-1)))+1))
+        # LEFT MIDDLE
+        if b-1 >= 0 and get_index(grid,(a,b-1)) != 'M':
+            set_index(grid,(a,b-1),str(int(get_index(grid,(a,b-1)))+1))
 
-    # BOTTOM MIDDLE
-    if a+1 <= ROWS-1 and get_index(grid,(a+1,b)) != 'M':
-        set_index(grid,(a+1,b),str(int(get_index(grid,(a+1,b)))+1))
+        # RIGHT MIDDLE
+        if b+1 <= COLUMNS-1 and get_index(grid,(a,b+1)) != 'M':
+            set_index(grid,(a,b+1),str(int(get_index(grid,(a,b+1)))+1))
 
-    # BOTTOM RIGHT
-    if a+1 <= ROWS-1 and b+1 <= COLUMNS-1 and get_index(grid,(a+1,b+1)) != 'M':
-        set_index(grid,(a+1,b+1),str(int(get_index(grid,(a+1,b+1)))+1))
+        # BOTTOM LEFT CORNER
+        if a+1 <= ROWS-1 and b-1 >= 0 and get_index(grid,(a+1,b-1)) != 'M':
+            set_index(grid,(a+1,b-1),str(int(get_index(grid,(a+1,b-1)))+1))
+
+        # BOTTOM MIDDLE
+        if a+1 <= ROWS-1 and get_index(grid,(a+1,b)) != 'M':
+            set_index(grid,(a+1,b),str(int(get_index(grid,(a+1,b)))+1))
+
+        # BOTTOM RIGHT
+        if a+1 <= ROWS-1 and b+1 <= COLUMNS-1 and get_index(grid,(a+1,b+1)) != 'M':
+            set_index(grid,(a+1,b+1),str(int(get_index(grid,(a+1,b+1)))+1))
 
 def set_index(grid: List[Optional[str]], coord: Tuple[int,int], value: str) -> None:
+    """
+    Converts a 2D coordinate into a 1D index and sets the value on the gameboard.
+
+    Args:
+      grid: List[Optional[str]]: the gameboard itself
+      coord: Tuple[int, int]: an x and y coord as a tuple
+      value: str: value to override at the provided coordinate
+
+    Returns:
+    """
     x,y =coord
     grid[x+(y*ROWS)] = value
 
 def get_index(grid: List[Optional[str]], coord: Tuple[int,int]) -> str:
+    """
+    Converts a 2D coordinate into a 1D index and returns the value on the gameboard.
+
+    Args:
+      grid: List[Optional[str]]: the gameboard itself
+      coord: Tuple[int, int]: an x and y coord as a tuple
+
+    Returns:
+        str: the uncovered value from the board or a space if None
+    """
     x,y =coord
     value = grid[x+(y*ROWS)]
     if value is None:
@@ -78,6 +104,15 @@ def get_index(grid: List[Optional[str]], coord: Tuple[int,int]) -> str:
     return value
 
 def display(grid: List[str]) -> None:
+    """
+    Prints the 1D list representing the gameboard
+
+    Args:
+      grid: List[str]: the gameboard itself
+
+    Returns:
+
+    """
     print(' '*5,end='')
     for c in range(COLUMNS):
         if c >= 10:
@@ -97,6 +132,15 @@ def display(grid: List[str]) -> None:
     print("Mines left:", FLAGS_PLACED)
 
 def add_color(value: str) -> str:
+    """
+    Modifies the value from the parameter to a colored version of itself
+
+    Args:
+      value: str: the value of a particular position on the gameboard
+
+    Returns:
+        str: returns a string containing the value at the coord in the matching color
+    """
     color = ''
     if value == 'M':
         color = '\033[0;31mM\033[0m'
@@ -122,7 +166,19 @@ def add_color(value: str) -> str:
         return value
     return color
 
-def input_board(layer: List[Optional[str]], grid: List[str], coord: Tuple[int,int], flag: Optional[str]=None) -> bool:
+def input_board(layer: List[str], grid: List[str], coord: Tuple[int,int], flag: Optional[str]=None) -> bool:
+    """
+    Function to test a coordinate on the board either revealing a mine or a number
+
+    Args:
+      layer: List[str]: a list of all uncovered values of the gameboard to show to the player
+      grid: List[str]: the gameboard itself
+      coord: Tuple[int, int]: an x and y coord as a tuple
+      flag: Optional[str]:  (Default value = None) indicates if special moves are to be done; i.e. undo, flag
+
+    Returns:
+        bool: indicates if a mine was triggered or not; i.e. gameover
+    """
     global COUNT
     global FLAGS_PLACED
     value = get_index(layer, coord)
@@ -145,7 +201,19 @@ def input_board(layer: List[Optional[str]], grid: List[str], coord: Tuple[int,in
             set_index(layer, coord, flag)
     return False
 
-def auto_reveal(layer: List[Optional[str]], grid: List[str], coord: Tuple[int,int], positions: List[Tuple[int,int]]=[]) -> None:
+def auto_reveal(layer: List[str], grid: List[str], coord: Tuple[int,int], positions: List[Tuple[int,int]]=[]) -> None:
+    """
+    Called when user uncovers a 0. This function will recursively call
+    input_board() until every neighboring 0 is uncovered.
+
+    Args:
+      layer: List[str]: a list of all uncovered values of the gameboard to show to the player
+      grid: List[str]: the gameboard itself
+      coord: Tuple[int, int]: a tuple with the position of a 0 on the board
+      positions: List[Tuple[int, int]]:  (Default value = []) a list of coordinates, each for a neighboring 0 value
+
+    Returns:
+    """
     #Check 8 positions surrounding
     a,b = coord
 
@@ -186,6 +254,15 @@ def auto_reveal(layer: List[Optional[str]], grid: List[str], coord: Tuple[int,in
         input_board(layer, grid, (x, y))
 
 def print_message(start: float, win: bool) -> None:
+    """
+    Prints ending message either gameover or you win and the time it took to solve.
+
+    Args:
+      start: float: Unix timestamp
+      win: bool: Flag indicating if the game was won
+
+    Returns:
+    """
     end = time.time() - start
     minutes = int(end // 60)
     seconds = int(end % 60)
@@ -204,6 +281,7 @@ def print_message(start: float, win: bool) -> None:
         print("0 seconds")
 
 def main() -> None:
+    """Main function with core game logic"""
     win = gameover = False
     start = time.time()
     display(layer)
