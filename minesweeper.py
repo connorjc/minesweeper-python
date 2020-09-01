@@ -10,6 +10,7 @@ import random
 import time
 import shlex
 import subprocess
+from typing import Optional, Tuple, List
 
 # default global variables
 PERCENT = 15
@@ -18,65 +19,65 @@ MINES = (PERCENT * ROWS * COLUMNS)//100
 COUNT = ROWS*COLUMNS - MINES
 FLAGS_PLACED = MINES
 
-def shuffle():
+def shuffle() -> List[str]:
     """Returns a randomized board with the settings above"""
     grid = ['M']*MINES
     grid.extend(['0']*(ROWS*COLUMNS-MINES))
     random.shuffle(grid)
 
-    for loc in list(map(lambda z: str(z%ROWS)+','+str(z//ROWS),
+    for coord in list(map(lambda z: (z%ROWS,z//ROWS),
         [i for i, v in enumerate(grid) if v == 'M'])):
-        init_cells(grid, loc)
+        init_cells(grid, coord)
 
     return grid
 
-def init_cells(grid, loc):
-    a,b = loc.split(',')
-    a = int(a)
-    b = int(b)
+def init_cells(grid: List[str], coord: Tuple[int,int]) -> None:
+    a,b = coord
 
     # TOP LEFT CORNER
-    if a-1 >= 0 and b-1 >=0 and get_index(grid,a-1,b-1) != 'M':
-        set_index(grid,a-1,b-1,str(int(get_index(grid,a-1,b-1))+1))
+    if a-1 >= 0 and b-1 >=0 and get_index(grid,(a-1,b-1)) != 'M':
+        set_index(grid,(a-1,b-1),str(int(get_index(grid,(a-1,b-1)))+1))
 
     # TOP MIDDLE
-    if a-1 >= 0 and get_index(grid,a-1,b) != 'M':
-        set_index(grid,a-1,b,str(int(get_index(grid,a-1,b))+1))
+    if a-1 >= 0 and get_index(grid,(a-1,b)) != 'M':
+        set_index(grid,(a-1,b),str(int(get_index(grid,(a-1,b)))+1))
 
     # TOP RIGHT CORNER
-    if a-1 >= 0 and b+1 <= COLUMNS-1 and get_index(grid,a-1,b+1) != 'M':
-        set_index(grid,a-1,b+1,str(int(get_index(grid,a-1,b+1))+1))
+    if a-1 >= 0 and b+1 <= COLUMNS-1 and get_index(grid,(a-1,b+1)) != 'M':
+        set_index(grid,(a-1,b+1),str(int(get_index(grid,(a-1,b+1)))+1))
 
     # LEFT MIDDLE
-    if b-1 >= 0 and get_index(grid,a,b-1) != 'M':
-        set_index(grid,a,b-1,str(int(get_index(grid,a,b-1))+1))
+    if b-1 >= 0 and get_index(grid,(a,b-1)) != 'M':
+        set_index(grid,(a,b-1),str(int(get_index(grid,(a,b-1)))+1))
 
     # RIGHT MIDDLE
-    if b+1 <= COLUMNS-1 and get_index(grid,a,b+1) != 'M':
-        set_index(grid,a,b+1,str(int(get_index(grid,a,b+1))+1))
+    if b+1 <= COLUMNS-1 and get_index(grid,(a,b+1)) != 'M':
+        set_index(grid,(a,b+1),str(int(get_index(grid,(a,b+1)))+1))
 
     # BOTTOM LEFT CORNER
-    if a+1 <= ROWS-1 and b-1 >= 0 and get_index(grid,a+1,b-1) != 'M':
-        set_index(grid,a+1,b-1,str(int(get_index(grid,a+1,b-1))+1))
+    if a+1 <= ROWS-1 and b-1 >= 0 and get_index(grid,(a+1,b-1)) != 'M':
+        set_index(grid,(a+1,b-1),str(int(get_index(grid,(a+1,b-1)))+1))
 
     # BOTTOM MIDDLE
-    if a+1 <= ROWS-1 and get_index(grid,a+1,b) != 'M':
-        set_index(grid,a+1,b,str(int(get_index(grid,a+1,b))+1))
+    if a+1 <= ROWS-1 and get_index(grid,(a+1,b)) != 'M':
+        set_index(grid,(a+1,b),str(int(get_index(grid,(a+1,b)))+1))
 
     # BOTTOM RIGHT
-    if a+1 <= ROWS-1 and b+1 <= COLUMNS-1 and get_index(grid,a+1,b+1) != 'M':
-        set_index(grid,a+1,b+1,str(int(get_index(grid,a+1,b+1))+1))
+    if a+1 <= ROWS-1 and b+1 <= COLUMNS-1 and get_index(grid,(a+1,b+1)) != 'M':
+        set_index(grid,(a+1,b+1),str(int(get_index(grid,(a+1,b+1)))+1))
 
-def set_index(grid, x, y, value):
+def set_index(grid: List[Optional[str]], coord: Tuple[int,int], value: str) -> None:
+    x,y =coord
     grid[x+(y*ROWS)] = value
 
-def get_index(grid, x, y):
+def get_index(grid: List[Optional[str]], coord: Tuple[int,int]) -> str:
+    x,y =coord
     value = grid[x+(y*ROWS)]
     if value is None:
         return ' '
     return value
 
-def display(grid):
+def display(grid: List[str]) -> None:
     print(' '*5,end='')
     for c in range(COLUMNS):
         if c >= 10:
@@ -91,11 +92,11 @@ def display(grid):
         else:
             print(str(r) + ' ',end='')
         for c in range(COLUMNS):
-            print("| " + add_color(get_index(grid,c,r))+' ',end='')
+            print("| " + add_color(get_index(grid,(c,r)))+' ',end='')
         print("|\n   " + "+---"*COLUMNS + '+')
     print("Mines left:", FLAGS_PLACED)
 
-def add_color(value):
+def add_color(value: str) -> str:
     color = ''
     if value == 'M':
         color = '\033[0;31mM\033[0m'
@@ -121,70 +122,70 @@ def add_color(value):
         return value
     return color
 
-def input_board(layer, grid, x, y, flag=None):
+def input_board(layer: List[Optional[str]], grid: List[str], coord: Tuple[int,int], flag: Optional[str]=None) -> bool:
     global COUNT
     global FLAGS_PLACED
-    value = get_index(layer, x, y)
+    value = get_index(layer, coord)
     if value in (' ','?') and flag is None: # found unchosen
-        reveal = get_index(grid, x, y)
-        set_index(layer, x, y, reveal)
+        reveal = get_index(grid, coord)
+        set_index(layer, coord, reveal)
         if reveal == 'M':
             return True
         if reveal == '0':
-            auto_reveal(layer, grid, (x, y))
+            auto_reveal(layer, grid, coord)
         COUNT -= 1
     elif value in ('F','?') and flag == 'U':
         if value == 'F':
             FLAGS_PLACED += 1
-        set_index(layer, x, y, None)
+        set_index(layer, coord, None)
     elif value in (' ','F','?') and flag is not None:
         if flag == 'F':
             FLAGS_PLACED -= 1
         if flag != 'U':
-            set_index(layer, x, y, flag)
+            set_index(layer, coord, flag)
     return False
 
-def auto_reveal(layer, grid, current, positions=[]):
+def auto_reveal(layer: List[Optional[str]], grid: List[str], coord: Tuple[int,int], positions: List[Tuple[int,int]]=[]) -> None:
     #Check 8 positions surrounding
-    a,b = current
+    a,b = coord
 
     # TOP LEFT CORNER
-    if a-1 >= 0 and b-1 >=0 and get_index(grid,a-1,b-1) != 'M':
+    if a-1 >= 0 and b-1 >=0 and get_index(grid,(a-1,b-1)) != 'M':
         positions.append((a-1,b-1))
 
     # TOP MIDDLE
-    if a-1 >= 0 and  get_index(grid,a-1,b) != 'M':
+    if a-1 >= 0 and  get_index(grid,(a-1,b)) != 'M':
         positions.append((a-1,b))
 
     # TOP RIGHT CORNER
-    if a-1 >= 0 and b+1 <= COLUMNS-1 and get_index(grid,a-1,b+1) != 'M':
+    if a-1 >= 0 and b+1 <= COLUMNS-1 and get_index(grid,(a-1,b+1)) != 'M':
         positions.append((a-1,b+1))
 
     # LEFT MIDDLE
-    if b-1 >= 0 and get_index(grid,a,b-1) != 'M':
+    if b-1 >= 0 and get_index(grid,(a,b-1)) != 'M':
         positions.append((a,b-1))
 
     # RIGHT MIDDLE
-    if b+1 <= COLUMNS-1 and get_index(grid,a,b+1) != 'M':
+    if b+1 <= COLUMNS-1 and get_index(grid,(a,b+1)) != 'M':
         positions.append((a,b+1))
 
     # BOTTOM LEFT CORNER
-    if a+1 <= ROWS-1 and b-1 >= 0 and get_index(grid,a+1,b-1) != 'M':
+    if a+1 <= ROWS-1 and b-1 >= 0 and get_index(grid,(a+1,b-1)) != 'M':
         positions.append((a+1,b-1))
 
     # BOTTOM MIDDLE
-    if a+1 <= ROWS-1 and get_index(grid,a+1,b) != 'M':
+    if a+1 <= ROWS-1 and get_index(grid,(a+1,b)) != 'M':
         positions.append((a+1,b))
 
     # BOTTOM RIGHT
-    if a+1 <= ROWS-1 and b+1 <= COLUMNS-1 and get_index(grid,a+1,b+1) != 'M':
+    if a+1 <= ROWS-1 and b+1 <= COLUMNS-1 and get_index(grid,(a+1,b+1)) != 'M':
         positions.append((a+1,b+1))
 
     while positions != []: #Base Case
         x,y = positions.pop()
-        input_board(layer, grid, x, y)
+        input_board(layer, grid, (x, y))
 
-def print_message(start, win):
+def print_message(start: float, win: bool) -> None:
     end = time.time() - start
     minutes = int(end // 60)
     seconds = int(end % 60)
@@ -202,7 +203,7 @@ def print_message(start, win):
     else:
         print("0 seconds")
 
-def main():
+def main() -> None:
     win = gameover = False
     start = time.time()
     display(layer)
@@ -217,7 +218,7 @@ def main():
                 else:
                     coord_x, coord_y = string.split()
                     char = None
-                gameover = input_board(layer, board, int(coord_x), int(coord_y),
+                gameover = input_board(layer, board, (int(coord_x), int(coord_y)),
                      char)
                 win = COUNT == 0
             else:
