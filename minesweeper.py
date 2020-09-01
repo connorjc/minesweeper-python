@@ -91,7 +91,7 @@ def display(grid):
         else:
             print(str(r) + ' ',end='')
         for c in range(COLUMNS):
-            print("| " + add_color(get_index(grid,r,c))+' ',end='') #TODO: flip coord
+            print("| " + add_color(get_index(grid,c,r))+' ',end='')
         print("|\n   " + "+---"*COLUMNS + '+')
     print("Mines left:", FLAGS_PLACED)
 
